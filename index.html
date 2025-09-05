@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Teacher's Day!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto; /* Allow scrolling if needed */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        h1 {
+            text-align: center;
+            color: #43c6ac;
+            margin-top: 20px;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .stack-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+            position: relative;
+            height: 60vh;
+            overflow: visible; /* Allow notes to move outside */
+            width: 100vw;
+            left: -10px; /* Account for body padding */
+        }
+        .letter-box {
+            width: min(300px, 85vw);
+            height: min(200px, 40vh);
+            background-image: 
+                linear-gradient(to right, #e0e0e0 1px, transparent 1px),
+                linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
+            background-size: min(20px, 4vw) min(20px, 4vw);
+            background-color: #ffffff;
+            border: 2px solid #ddd;
+            margin-bottom: -160px;
+            position: absolute;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: rotate(-2deg);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: min(20px, 4vw);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            left: 50%;
+            transform-origin: center;
+            overflow: visible; /* Allow diagonal movement outside bounds */
+        }
+        .letter-box:nth-child(1) {
+            transform: rotate(-2deg) translateX(-50%);
+            z-index: 14;
+            top: min(80px, 15vh);
+        }
+        .letter-box:nth-child(2) {
+            transform: rotate(1deg) translateX(-50%);
+            z-index: 13;
+            top: min(95px, 18vh);
+        }
+        .letter-box:nth-child(3) {
+            transform: rotate(-1deg) translateX(-50%);
+            z-index: 12;
+            top: min(110px, 21vh);
+        }
+        .letter-box:nth-child(4) {
+            transform: rotate(2deg) translateX(-50%);
+            z-index: 11;
+            top: min(125px, 24vh);
+        }
+        .letter-box.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            filter: blur(1px);
+        }
+        .letter-box .wrap {
+            font-size: clamp(2rem, 6vw, 3rem);
+            display: block;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .letter-box .letter-content {
+            display: none;
+            font-size: clamp(12px, 3vw, 14px);
+            color: #2c5aa0;
+            line-height: 1.4;
+            text-align: left;
+            font-weight: bold;
+            transform: rotate(-1deg);
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .letter-box.open {
+            transform: rotate(0deg) scale(1.05);
+            z-index: 20;
+            cursor: grab;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .letter-box.open .wrap {
+            display: none;
+        }
+        .letter-box.open .letter-content {
+            display: block;
+        }
+        .letter-box:active {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            .stack-container {
+                margin-top: 20px;
+                height: 50vh;
+            }
+            .letter-box {
+                width: min(280px, 90vw);
+                height: min(180px, 35vh);
+                padding: 15px;
+            }
+            .letter-box:nth-child(1) {
+                top: min(60px, 12vh);
+            }
+            .letter-box:nth-child(2) {
+                top: min(70px, 14vh);
+            }
+            .letter-box:nth-child(3) {
+                top: min(80px, 16vh);
+            }
+            .letter-box:nth-child(4) {
+                top: min(90px, 18vh);
+            }
+        }
+
+        /* Small mobile screens */
+        @media (max-width: 480px) {
+            .letter-box {
+                width: min(250px, 95vw);
+                height: min(160px, 30vh);
+                padding: 12px;
+            }
+            h1 {
+                font-size: clamp(1.2rem, 6vw, 2rem);
+                margin-top: 15px;
+            }
+        }
+
+        /* Touch device improvements */
+        @media (pointer: coarse) {
+            .letter-box {
+                cursor: default;
+            }
+            .letter-box.open {
+                cursor: default;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Happy Teacher's Day!</h1>
+    <div class="stack-container">
+        <div class="letter-box" id="box1" onclick="openBox(1)">
+            <div class="wrap">📝</div>
+            <div class="letter-content">You are My Favorite<br>Teacher 😊<br><br>How can be<br>someone so cute ❤️</div>
+        </div>
+        <div class="letter-box" id="box2" onclick="openBox(2)">
+            <div class="wrap">📝</div>
+            <div class="letter-content">Thank you for<br>believing in me<br><br>Episode 233<br><br>of being awesome!</div>
+        </div>
+        <div class="letter-box" id="box3" onclick="openBox(3)">
+            <div class="wrap">📝</div>
+            <div class="letter-content">Please message<br><br>Facebook233<br><br>You're the best!</div>
+        </div>
+        <div class="letter-box" id="box4" onclick="openBox(4)">
+            <div class="wrap">📝</div>
+            <div class="letter-content">Drop the papers & smile!<br><br>Happy Teacher's Day<br><br>You deserve all the<br>love in the world! 💕</div>
+        </div>
+    </div>
+    <script>
+        let current = 1;
+        let clickStates = {}; // Track click states for each box
+
+        // Wait for page to load before initializing
+        document.addEventListener('DOMContentLoaded', function() {
+            for(let i=2;i<=4;i++) {
+                document.getElementById('box'+i).classList.add('disabled');
+            }
+
+            // Check if GSAP is loaded, if not use fallback
+            if(typeof gsap !== 'undefined') {
+                // Initial GSAP setup for all boxes
+                gsap.set('.letter-box', {
+                    transformOrigin: 'center center'
+                });
+
+                // Set initial state for letter content
+                gsap.set('.letter-content', {
+                    opacity: 0,
+                    y: 20
+                });
+
+                // Animate boxes on page load
+                gsap.from('.letter-box', {
+                    duration: 0.8,
+                    y: -100,
+                    rotation: 20,
+                    opacity: 0,
+                    stagger: 0.2,
+                    ease: 'back.out(1.7)'
+                });
+            } else {
+                console.log('GSAP not loaded, using CSS fallbacks');
+            }
+        });
+
+        function openBox(num) {
+            console.log('openBox called with num:', num, 'current:', current);
+            
+            if(num !== current) {
+                console.log('Not current box, ignoring');
+                return;
+            }
+            
+            const box = document.getElementById('box'+num);
+            console.log('Box element:', box);
+            console.log('Current click state:', clickStates[num]);
+            
+            if(!clickStates[num]) {
+                // First click - show text
+                console.log('First click - showing text');
+                box.classList.add('open');
+                
+                if(typeof gsap !== 'undefined') {
+                    // GSAP animations
+                    gsap.to(box.querySelector('.wrap'), {
+                        duration: 0.3,
+                        opacity: 0,
+                        scale: 0.8,
+                        ease: 'power2.out'
+                    });
+                    
+                    gsap.to(box.querySelector('.letter-content'), {
+                        duration: 0.6,
+                        opacity: 1,
+                        y: 0,
+                        ease: 'power2.out',
+                        delay: 0.2
+                    });
+                    
+                    gsap.to(box, {
+                        duration: 0.5,
+                        scale: 1.05,
+                        rotation: 0,
+                        ease: 'back.out(1.7)'
+                    });
+                } else {
+                    // CSS fallback
+                    box.querySelector('.wrap').style.display = 'none';
+                    box.querySelector('.letter-content').style.display = 'block';
+                    box.querySelector('.letter-content').style.opacity = '1';
+                }
+                
+                clickStates[num] = 'text-shown';
+                
+            } else if(clickStates[num] === 'text-shown') {
+                // Second click - green border and disappear
+                console.log('Second click - green border and disappear');
+                clickStates[num] = 'disappearing';
+                
+                if(typeof gsap !== 'undefined') {
+                    // GSAP animations - diagonal movement then disappear
+                    gsap.to(box, {
+                        duration: 0.2,
+                        borderColor: '#4CAF50',
+                        borderWidth: '4px',
+                        ease: 'power2.out',
+                        onComplete: function() {
+                            // Enhanced diagonal movement: much more dramatic
+                            const direction = Math.random() > 0.5 ? 1 : -1;
+                            const diagonalX = direction * (Math.random() * 400 + 300); // 300-700px
+                            const diagonalY = -(Math.random() * 400 + 250); // -250 to -650px (way upward)
+                            
+                            // Add some randomness to make it more natural
+                            const bounceX = direction * (Math.random() * 100 + 50); // Extra bounce
+                            const finalRotation = direction * (Math.random() * 360 + 180); // 180-540 degrees
+                            
+                            gsap.to(box, {
+                                duration: 1.2, // Longer animation
+                                x: diagonalX,
+                                y: diagonalY,
+                                rotation: finalRotation,
+                                opacity: 0,
+                                scale: 0.1, // Shrink more
+                                ease: 'power2.out',
+                                onUpdate: function() {
+                                    // Add wobble effect during movement
+                                    const progress = this.progress();
+                                    const wobble = Math.sin(progress * Math.PI * 4) * 20;
+                                    gsap.set(box, { rotationZ: finalRotation + wobble });
+                                },
+                                onComplete: function() {
+                                    box.style.display = 'none';
+                                }
+                            });
+                            
+                            // Add a secondary bounce animation
+                            gsap.to(box, {
+                                duration: 0.3,
+                                x: `+=${bounceX}`,
+                                y: '+=30',
+                                ease: 'power2.inOut',
+                                delay: 0.4
+                            });
+                        }
+                    });
+                } else {
+                    // CSS fallback - enhanced diagonal movement
+                    box.style.border = '4px solid #4CAF50';
+                    setTimeout(() => {
+                        const direction = Math.random() > 0.5 ? 1 : -1;
+                        box.style.opacity = '0';
+                        box.style.transition = 'all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                        box.style.transform = `translate(${direction * 500}px, -400px) scale(0.1) rotate(${direction * 450}deg)`;
+                        setTimeout(() => {
+                            box.style.display = 'none';
+                        }, 1200);
+                    }, 200);
+                }
+                
+                // Move to next note
+                if(current < 4) {
+                    current++;
+                    console.log('Moving to next note:', current);
+                    const nextBox = document.getElementById('box'+current);
+                    nextBox.classList.remove('disabled');
+                    
+                    // Ensure next box is fully visible with GSAP or CSS
+                    if(typeof gsap !== 'undefined') {
+                        gsap.to(nextBox, {
+                            duration: 0.4,
+                            opacity: 1,
+                            filter: 'blur(0px)',
+                            scale: 1,
+                            ease: 'power2.out'
+                        });
+                    } else {
+                        nextBox.style.opacity = '1';
+                        nextBox.style.filter = 'blur(0px)';
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
