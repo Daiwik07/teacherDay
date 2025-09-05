@@ -199,31 +199,25 @@
             <div class="letter-content">Drop the papers & smile!<br><br>Happy Teacher's Day<br><br>You deserve all the<br>love in the world! 💕</div>
         </div>
     </div>
-    <h1>Click to see magic</h1>
+    <h1>Keep Clicking to see magic</h1>
     <script>
         let current = 1;
-        let clickStates = {}; // Track click states for each box
-
-        // Wait for page to load before initializing
+        let clickStates = {};
         document.addEventListener('DOMContentLoaded', function() {
             for(let i=2;i<=4;i++) {
                 document.getElementById('box'+i).classList.add('disabled');
             }
 
-            // Check if GSAP is loaded, if not use fallback
             if(typeof gsap !== 'undefined') {
-                // Initial GSAP setup for all boxes
                 gsap.set('.letter-box', {
                     transformOrigin: 'center center'
                 });
 
-                // Set initial state for letter content
                 gsap.set('.letter-content', {
                     opacity: 0,
                     y: 20
                 });
 
-                // Animate boxes on page load
                 gsap.from('.letter-box', {
                     duration: 0.8,
                     y: -100,
@@ -250,12 +244,10 @@
             console.log('Current click state:', clickStates[num]);
             
             if(!clickStates[num]) {
-                // First click - show text
                 console.log('First click - showing text');
                 box.classList.add('open');
                 
                 if(typeof gsap !== 'undefined') {
-                    // GSAP animations
                     gsap.to(box.querySelector('.wrap'), {
                         duration: 0.3,
                         opacity: 0,
@@ -278,7 +270,6 @@
                         ease: 'back.out(1.7)'
                     });
                 } else {
-                    // CSS fallback
                     box.querySelector('.wrap').style.display = 'none';
                     box.querySelector('.letter-content').style.display = 'block';
                     box.querySelector('.letter-content').style.opacity = '1';
@@ -287,37 +278,32 @@
                 clickStates[num] = 'text-shown';
                 
             } else if(clickStates[num] === 'text-shown') {
-                // Second click - green border and disappear
                 console.log('Second click - green border and disappear');
                 clickStates[num] = 'disappearing';
                 
                 if(typeof gsap !== 'undefined') {
-                    // GSAP animations - diagonal movement then disappear
                     gsap.to(box, {
                         duration: 0.2,
                         borderColor: '#4CAF50',
                         borderWidth: '4px',
                         ease: 'power2.out',
                         onComplete: function() {
-                            // Enhanced diagonal movement: much more dramatic
                             const direction = Math.random() > 0.5 ? 1 : -1;
-                            const diagonalX = direction * (Math.random() * 400 + 300); // 300-700px
-                            const diagonalY = -(Math.random() * 400 + 250); // -250 to -650px (way upward)
+                            const diagonalX = direction * (Math.random() * 400 + 300);
+                            const diagonalY = -(Math.random() * 400 + 250); 
                             
-                            // Add some randomness to make it more natural
-                            const bounceX = direction * (Math.random() * 100 + 50); // Extra bounce
-                            const finalRotation = direction * (Math.random() * 360 + 180); // 180-540 degrees
+                            const bounceX = direction * (Math.random() * 100 + 50); 
+                            const finalRotation = direction * (Math.random() * 360 + 180); 
                             
                             gsap.to(box, {
-                                duration: 1.2, // Longer animation
+                                duration: 1.2,
                                 x: diagonalX,
                                 y: diagonalY,
                                 rotation: finalRotation,
                                 opacity: 0,
-                                scale: 0.1, // Shrink more
+                                scale: 0.1,
                                 ease: 'power2.out',
                                 onUpdate: function() {
-                                    // Add wobble effect during movement
                                     const progress = this.progress();
                                     const wobble = Math.sin(progress * Math.PI * 4) * 20;
                                     gsap.set(box, { rotationZ: finalRotation + wobble });
@@ -327,7 +313,6 @@
                                 }
                             });
                             
-                            // Add a secondary bounce animation
                             gsap.to(box, {
                                 duration: 0.3,
                                 x: `+=${bounceX}`,
@@ -338,7 +323,6 @@
                         }
                     });
                 } else {
-                    // CSS fallback - enhanced diagonal movement
                     box.style.border = '4px solid #4CAF50';
                     setTimeout(() => {
                         const direction = Math.random() > 0.5 ? 1 : -1;
@@ -351,14 +335,12 @@
                     }, 200);
                 }
                 
-                // Move to next note
                 if(current < 4) {
                     current++;
                     console.log('Moving to next note:', current);
                     const nextBox = document.getElementById('box'+current);
                     nextBox.classList.remove('disabled');
                     
-                    // Ensure next box is fully visible with GSAP or CSS
                     if(typeof gsap !== 'undefined') {
                         gsap.to(nextBox, {
                             duration: 0.4,
